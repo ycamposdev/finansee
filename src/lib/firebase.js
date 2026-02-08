@@ -4,13 +4,12 @@ import { getAuth } from "firebase/auth"; // <--- Importante para el Login
 import { getFirestore } from "firebase/firestore"; // <--- Importante para la DB
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDME4XpsZCB2rrgHpB7n-JGFbbepqJ79zQ",
-  authDomain: "billflow-cfdc8.firebaseapp.com",
-  projectId: "billflow-cfdc8",
-  storageBucket: "billflow-cfdc8.firebasestorage.app",
-  messagingSenderId: "416326872173",
-  appId: "1:416326872173:web:43c610c0de0cfbb4746364",
-  measurementId: "G-L6GL9H0PX2",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 // Evitamos que Firebase se inicialice más de una vez (común en Next.js)
