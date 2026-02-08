@@ -17,6 +17,7 @@ export default function LoginPage() {
   const validacion = async (e) => {
     e.preventDefault();
     console.log("separacion de ambientes");
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("usuario logeado");

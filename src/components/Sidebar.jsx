@@ -26,6 +26,7 @@ export default function Sidebar() {
         <span className="text-white font-bold text-xl tracking-tight uppercase italic">
           finansee
         </span>
+        <span>test dev</span>
       </div>
 
       {/* Menú */}
