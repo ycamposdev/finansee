@@ -1,0 +1,14 @@
+# 1. Configuración de Construcción General
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# 2. Ambiente de PRODUCCIÓN (Rama main)
+# Aquí defines qué verá el mundo cuando el proyecto esté terminado.
+[context.production.environment]
+  NEXT_PUBLIC_ENV_NAME = "produccion"
+
+# 3. Ambiente de DESARROLLO (Rama develop)
+# Aquí es donde verás tus avances constantes.
+[context.dev.environment]
+  NEXT_PUBLIC_ENV_NAME = "dev"
