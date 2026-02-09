@@ -6,14 +6,71 @@ import {
   LogOut,
   Box,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { auth, db } from "../lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Sidebar() {
+  const [usuarioRol, setUsuarioRol] = useState("");
+
   const menuItems = [
     { name: "Dashboard", icon: <LayoutDashboard size={20} />, active: true },
     { name: "Facturas", icon: <FileText size={20} />, active: false },
     { name: "Proveedores", icon: <Box size={20} />, active: false },
     { name: "Clientes", icon: <Users size={20} />, active: false },
   ];
+
+  // const handleObtenerCredencial = async () => {
+  //   try {
+  //     const usuarioCredencial = await signInWithEmailAndPassword(
+  //       auth,
+  //       email,
+  //       password,
+  //     );
+  //     const user = usuarioCredencial.user;
+
+  //     const docRef = doc(db, "users", user.uid);
+  //     const docSnap = await getDoc(docRef);
+  //     const data = docSnap.data();
+  //     setUsuarioRol(data.role);
+  //   } catch (error) {
+  //     console.log(usuarioRol);
+  //   }
+  // };
+
+  //v2
+  // useEffect(() => {
+  //   const obtenerRol = async () => {
+  //     const usuario = auth.currentUser;
+  //     const docRef = doc(db, "users", usuario.uid);
+  //     const docSnap = await getDoc(docRef);
+
+  //     setUsuarioRol(docSnap.data().rol);
+  //   };
+  //   obtenerRol();
+  // }, []);
+
+  useEffect(() => {
+    const traerRol = async () => {
+      // 1. Obtenemos al usuario que ya inició sesión
+      const user = auth.currentUser;
+
+      if (user) {
+        // 2. Consultamos Firestore usando su UID
+        const docRef = doc(db, "users", user.uid);
+        // getDoc - Hace llamada/busqueda de la direccion que esta dentro de su parentesis
+        const datoUsuario = await getDoc(docRef);
+
+        if (datoUsuario.exists()) {
+          // 3. Actualizamos el estado con el rol (admin, proveedor, etc.)
+          setUsuarioRol(datoUsuario.data().rol);
+        }
+      }
+    };
+
+    traerRol();
+  }, []);
 
   return (
     // h-[calc(100vh-2rem)] asegura que llegue hasta abajo dejando el margen del floating
@@ -23,10 +80,16 @@ export default function Sidebar() {
         <div className="bg-orange-500 p-2 rounded-xl text-white shadow-lg shadow-orange-500/20">
           <Box size={22} fill="currentColor" />
         </div>
-        <span className="text-white font-bold text-xl tracking-tight uppercase italic">
-          finansee
-        </span>
-        <span>test dev</span>
+        <div className="flex flex-col">
+          <span className="text-white font-bold text-xl tracking-tight uppercase italic">
+            finansee
+          </span>
+          <span>
+            {usuarioRol == "admin"
+              ? "Administrador"
+              : usuarioRol || "No encontrado"}
+          </span>
+        </div>
       </div>
 
       {/* Menú */}
