@@ -77,7 +77,7 @@ export default function LoginPage() {
         <p className="text-center text-gray-500 text-xs mt-8">
           ¿No tienes acceso?{" "}
           <span className="text-white hover:underline font-medium cursor-pointer">
-            Soporte
+            Crear una cuenta
           </span>
         </p>
       </div>

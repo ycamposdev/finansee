@@ -5,11 +5,15 @@ import {
   Settings,
   LogOut,
   Box,
+  SendHorizontal,
+  ReceiptText,
+  Wallet,
+  LifeBuoy,
+  HandCoins,
+  FileCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { auth, db } from "../lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { obtenerDatosUsuario } from "@/lib/userData";
 
 export default function Sidebar() {
   const [usuarioRol, setUsuarioRol] = useState("");
@@ -21,55 +25,33 @@ export default function Sidebar() {
     { name: "Clientes", icon: <Users size={20} />, active: false },
   ];
 
-  // const handleObtenerCredencial = async () => {
-  //   try {
-  //     const usuarioCredencial = await signInWithEmailAndPassword(
-  //       auth,
-  //       email,
-  //       password,
-  //     );
-  //     const user = usuarioCredencial.user;
+  const menuCliente = [
+    {
+      name: "Realizar Pago",
+      icon: <SendHorizontal size={20} />,
+      active: true,
+    },
+    { name: "Mis Pagos", icon: <ReceiptText size={20} />, active: false },
+    { name: "Métodos de Pago", icon: <Wallet size={20} />, active: false },
+    { name: "Soporte de Pagos", icon: <LifeBuoy size={20} />, active: false },
+  ];
 
-  //     const docRef = doc(db, "users", user.uid);
-  //     const docSnap = await getDoc(docRef);
-  //     const data = docSnap.data();
-  //     setUsuarioRol(data.role);
-  //   } catch (error) {
-  //     console.log(usuarioRol);
-  //   }
-  // };
-
-  //v2
-  // useEffect(() => {
-  //   const obtenerRol = async () => {
-  //     const usuario = auth.currentUser;
-  //     const docRef = doc(db, "users", usuario.uid);
-  //     const docSnap = await getDoc(docRef);
-
-  //     setUsuarioRol(docSnap.data().rol);
-  //   };
-  //   obtenerRol();
-  // }, []);
+  const menuProveedor = [
+    {
+      name: "Dashboard",
+      icon: <LayoutDashboard size={20} />,
+      active: true,
+    },
+    { name: "Generar cobro", icon: <HandCoins size={20} />, active: false },
+    { name: "Recibos Emitidos", icon: <FileCheck size={20} />, active: false },
+  ];
 
   useEffect(() => {
-    const traerRol = async () => {
-      // 1. Obtenemos al usuario que ya inició sesión
-      const user = auth.currentUser;
-
-      if (user) {
-        // 2. Consultamos Firestore usando su UID
-        const docRef = doc(db, "users", user.uid);
-        // getDoc - Hace llamada/busqueda de la direccion que esta dentro de su parentesis
-        const datoUsuario = await getDoc(docRef);
-
-        if (datoUsuario.exists()) {
-          // 3. Actualizamos el estado con el rol (admin, proveedor, etc.)
-          setUsuarioRol(datoUsuario.data().rol);
-        }
-      }
+    const cargarInfo = async () => {
+      const info = await obtenerDatosUsuario();
+      setUsuarioRol(info);
     };
-
-    traerRol();
+    cargarInfo();
   }, []);
 
   return (
@@ -85,9 +67,9 @@ export default function Sidebar() {
             finansee
           </span>
           <span>
-            {usuarioRol == "admin"
+            {usuarioRol?.rol == "admin"
               ? "Administrador"
-              : usuarioRol || "No encontrado"}
+              : usuarioRol?.rol || "No encontrado"}
           </span>
         </div>
       </div>
@@ -97,19 +79,49 @@ export default function Sidebar() {
         <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4 px-2">
           Main Menu
         </p>
-        {menuItems.map((item) => (
-          <button
-            key={item.name}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
-              item.active
-                ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
-                : "hover:bg-white/5 hover:text-gray-200"
-            }`}
-          >
-            {item.icon}
-            <span className="font-medium text-sm">{item.name}</span>
-          </button>
-        ))}
+        {usuarioRol?.rol == "admin"
+          ? menuItems.map((item) => (
+              <button
+                key={item.name}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                  item.active
+                    ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
+                    : "hover:bg-white/5 hover:text-gray-200"
+                }`}
+              >
+                {item.icon}
+                <span className="font-medium text-sm">{item.name}</span>
+              </button>
+            ))
+          : usuarioRol?.rol == "cliente"
+            ? menuCliente.map((item) => (
+                <button
+                  key={item.name}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                    item.active
+                      ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
+                      : "hover:bg-white/5 hover:text-gray-200"
+                  }`}
+                >
+                  {item.icon}
+                  <span className="font-medium text-sm">{item.name}</span>
+                </button>
+              ))
+            : usuarioRol?.rol == "proveedor"
+              ? menuProveedor.map((item) => (
+                  <button
+                    key={item.name}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                      item.active
+                        ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
+                        : "hover:bg-white/5 hover:text-gray-200"
+                    }`}
+                  >
+                    {item.icon}
+                    <span className="font-medium text-sm">{item.name}</span>
+                  </button>
+                ))
+              : undefined}
       </nav>
 
       {/* Footer del Sidebar */}
