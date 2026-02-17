@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("usuario logeado");
-      router.push("/");
+      router.push("/admin/dashboard");
     } catch (error) {
       console.log("Error al logearse", error);
       alert("valida usuario o contraseña de Firebase");

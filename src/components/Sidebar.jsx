@@ -1,3 +1,5 @@
+"use client";
+
 import {
   LayoutDashboard,
   FileText,
@@ -14,13 +16,26 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { obtenerDatosUsuario } from "@/lib/userData";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
+  const pathname = usePathname();
   const [usuarioRol, setUsuarioRol] = useState("");
 
   const menuItems = [
-    { name: "Dashboard", icon: <LayoutDashboard size={20} />, active: true },
-    { name: "Facturas", icon: <FileText size={20} />, active: false },
+    {
+      name: "Dashboard",
+      icon: <LayoutDashboard size={20} />,
+      active: true,
+      path: "/admin/dashboard",
+    },
+    {
+      name: "Facturas",
+      icon: <FileText size={20} />,
+      active: false,
+      path: "/admin/facturas",
+    },
     { name: "Proveedores", icon: <Box size={20} />, active: false },
     { name: "Clientes", icon: <Users size={20} />, active: false },
   ];
@@ -80,19 +95,33 @@ export default function Sidebar() {
           Main Menu
         </p>
         {usuarioRol?.rol == "admin"
-          ? menuItems.map((item) => (
-              <button
-                key={item.name}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
-                  item.active
-                    ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
-                    : "hover:bg-white/5 hover:text-gray-200"
-                }`}
-              >
-                {item.icon}
-                <span className="font-medium text-sm">{item.name}</span>
-              </button>
-            ))
+          ? menuItems.map((item) => {
+              // ESTA ES LA CLAVE: Comparamos la URL real con el path del menú
+              const isActive = pathname === item.path;
+
+              return (
+                <Link
+                  key={item.name}
+                  href={item.path || "#"}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                    isActive // <--- Usamos nuestra nueva variable
+                      ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
+                      : "hover:bg-white/5 hover:text-gray-200 text-gray-400"
+                  }`}
+                >
+                  <div
+                    className={`${isActive ? "scale-110" : ""} transition-transform duration-300`}
+                  >
+                    {item.icon}
+                  </div>
+                  <span
+                    className={`font-medium text-sm ${isActive ? "font-bold" : ""}`}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            })
           : usuarioRol?.rol == "cliente"
             ? menuCliente.map((item) => (
                 <button
