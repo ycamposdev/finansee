@@ -1,13 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "../../components/ui/button";
+
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { Box } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "../../lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { getDoc, doc } from "firebase/firestore";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,12 +21,35 @@ export default function LoginPage() {
     console.log("separacion de ambientes");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log("usuario logeado");
-      router.push("/admin/dashboard");
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const user = userCredential.user;
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+
+      // if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const getRol = userData.rol; // Verifica que en Firebase el campo se llame exactamente 'rol'
+      console.log("Rol encontrado:", getRol);
+
+      const routes = {
+        admin: "/admin/dashboard",
+        cliente: "/cliente/realizarPago",
+        proveedor: "/proveedor/dashboard",
+      };
+
+      router.push(routes[getRol]);
+
+      // } else {
+      //   console.error("No existe el documento del usuario en Firestore");
+      //   alert("Usuario autenticado, pero no tiene perfil en la base de datos.");
+      // }
     } catch (error) {
-      console.log("Error al logearse", error);
-      alert("valida usuario o contraseña de Firebase");
+      console.error("Error completo:", error);
+      alert("Error en el acceso. Revisa consola para más detalle.");
     }
   };
 

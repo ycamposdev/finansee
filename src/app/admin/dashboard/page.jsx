@@ -1,9 +1,16 @@
 "use client";
 
-import Card from "@/components/card";
-import Grafico from "@/components/Grafico";
-import Recientes from "@/components/Recientes";
-import { obtenerDatosUsuario } from "@/lib/userData";
+// import Card from "@/components/card";
+// import Grafico from "@/components/Grafico";
+// import Recientes from "@/components/Recientes";
+// import { obtenerDatosUsuario } from "@/lib/userData";
+// import { useState, useEffect } from "react";
+
+// Cambiamos el @/ por ../../../ (subir 3 niveles hasta llegar a src)
+import Card from "../../../components/card";
+import Grafico from "../../../components/Grafico";
+import Recientes from "../../../components/Recientes";
+import { obtenerDatosUsuario } from "../../../lib/userData";
 import { useState, useEffect } from "react";
 
 export default function Home() {
