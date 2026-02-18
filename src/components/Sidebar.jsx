@@ -77,12 +77,12 @@ export default function Sidebar() {
     {
       name: "Generar cobro",
       icon: <HandCoins size={20} />,
-      path: "/proveedor/cobro",
+      path: "/proveedor/generarCobro",
     },
     {
       name: "Recibos Emitidos",
       icon: <FileCheck size={20} />,
-      path: "/proveedor/recibos",
+      path: "/proveedor/recibosEmitidos",
     },
   ];
 
